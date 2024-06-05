@@ -29,11 +29,12 @@
                         <td scope="col">{{ album.release_date }}</td>
                         <td scope="col">
                             <a href="{% url "edit_album" album.id %}">
-                                <button class="btn me-1 btn-warning">Edit</button>
+                                <button class="btn me-1 btn-warning mb-2">Edit</button>
                             </a>
-                            <a href="{% url "delete_album" album.id %}">
+                            <form action="{% url "delete_album" album.id %}" method="post">
+                                {% csrf_token %}
                                 <button class="btn me-1 btn-danger">Delete</button>
-                            </a>
+                            </form>
                         </td>
                     </tr>
                 {% endfor %}

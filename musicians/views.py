@@ -1,5 +1,4 @@
-from django.shortcuts import render, redirect
-from django.views.generic import CreateView
+from django.views.generic import CreateView, ListView, DeleteView, UpdateView
 from django.urls import reverse_lazy
 from .form import MusiciansForm, AlbumsForm
 from .models import Album, Musician
@@ -8,64 +7,45 @@ from .models import Album, Musician
 
 class AddMusiciansView(CreateView):
     model = Musician
-    form_class = MusiciansForm()
+    form_class = MusiciansForm
     template_name = 'addMusicians.html'
     success_url = reverse_lazy("view_musics")
 
 
-def add_musicians(request):
-    if request.method == 'POST':
-        form = MusiciansForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("view_musics")
-    else:
-        form = MusiciansForm()
-
-    return render(request, 'addMusicians.html', {'form': form})
+class AddAlbumView(CreateView):
+    model = Album
+    form_class = AlbumsForm
+    template_name = "addAlbums.html"
+    success_url = reverse_lazy("view_musics")
 
 
-def add_album(request):
-    if request.method == 'POST':
-        form = AlbumsForm(request.POST)
-        if form.is_valid():
-            form.save()
-            return redirect("view_musics")
-    else:
-        form = AlbumsForm()
+class DisplayMusicsView(ListView):
+    model = Album
+    template_name = 'viewMusics.html'
 
-    return render(request, 'addAlbums.html', {'form': form})
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context["data"] = context['object_list']
+        return context
 
 
-def view_musics(request):
-    data = Album.objects.all()
-    return render(request, 'viewMusics.html', {'data': data})
+class DeleteAlbumView(DeleteView):
+    model = Album
+    success_url = reverse_lazy("view_musics")
+    pk_url_kwarg = 'id'
 
 
-def delete_album(request, id):
-    album = Album.objects.get(pk=id)
-    album.delete()
-    return redirect("view_musics")
+class UpdateAlbumView(UpdateView):
+    model = Album
+    form_class = AlbumsForm
+    pk_url_kwarg = 'id'
+    template_name = 'addAlbums.html'
+    success_url = reverse_lazy("view_musics")
 
 
-def edit_album(request, id):
-    album = Album.objects.get(pk=id)
-    form = AlbumsForm(instance=album)
-    if request.method == 'POST':
-        form = AlbumsForm(request.POST, instance=album)
-        if form.is_valid():
-            form.save()
-            return redirect("view_musics")
-    return render(request, 'addAlbums.html', {'form': form})
-
-
-def edit_musicians(request, id):
-    musician = Musician.objects.get(pk=id)
-    form = MusiciansForm(instance=musician)
-    if request.method == 'POST':
-        form = MusiciansForm(request.POST, instance=musician)
-        if form.is_valid():
-            form.save()
-            return redirect("view_musics")
-
-    return render(request, 'editMusicians.html', {'form': form})
+class UpdateMusicsView(UpdateView):
+    model = Musician
+    form_class = MusiciansForm
+    pk_url_kwarg = 'id'
+    template_name = 'editMusicians.html'
+    success_url = reverse_lazy("view_musics")
