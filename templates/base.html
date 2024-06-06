@@ -40,6 +40,21 @@
                             <a class="nav-link" href="{% url "view_musics" %}">View Music</a>
                         </li>
                     </ul>
+                    <div>
+                        {% if not user.is_authenticated %}
+                            <a href="{% url "register_user" %}">
+                                <button class="btn btn-success me-2">Register</button>
+                            </a>
+                            <a href="{% url "login_user" %}">
+                                <button class="btn btn-success me-2">Login</button>
+                            </a>
+                        {% else %}
+                            <form action="{% url "logout_user" %}" method="post">
+                                {% csrf_token %}
+                                <button class="btn btn-success me-2">Logout</button>
+                            </form>
+                        {% endif %}
+                    </div>
                 </div>
             </div>
         </nav>

@@ -28,13 +28,17 @@
                         <td scope="col">{{ album.album_name }}</td>
                         <td scope="col">{{ album.release_date }}</td>
                         <td scope="col">
-                            <a href="{% url "edit_album" album.id %}">
-                                <button class="btn me-1 btn-warning mb-2">Edit</button>
-                            </a>
-                            <form action="{% url "delete_album" album.id %}" method="post">
-                                {% csrf_token %}
-                                <button class="btn me-1 btn-danger">Delete</button>
-                            </form>
+                            {% if user.is_authenticated %}
+                                <a href="{% url "edit_album" album.id %}">
+                                    <button class="btn me-1 btn-warning mb-2">Edit</button>
+                                </a>
+                                <form action="{% url "delete_album" album.id %}" method="post">
+                                    {% csrf_token %}
+                                    <button class="btn me-1 btn-danger">Delete</button>
+                                </form>
+                            {% else %}
+                                <p class="text-muted">Login to view actions</p>
+                            {% endif %}
                         </td>
                     </tr>
                 {% endfor %}
